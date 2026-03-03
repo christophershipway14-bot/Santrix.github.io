@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Santrix Login</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:Arial;
+  color:white;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* Same Earth Background */
+body::before{
+  content:"";
+  position:fixed;
+  width:100%;height:100%;
+  background:url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1920") no-repeat center/cover;
+  z-index:-2;
+  animation:earthMove 60s linear infinite;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.65);
+  z-index:-1;
+}
+
+@keyframes earthMove{
+  0%{transform:scale(1.1);}
+  50%{transform:scale(1.15) translateY(-20px);}
+  100%{transform:scale(1.1);}
+}
+
+.login-box{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  padding:40px;
+  border-radius:15px;
+  text-align:center;
+}
+
+input{
+  padding:10px;
+  margin:10px;
+  border:none;
+  border-radius:6px;
+  width:250px;
+}
+
+button{
+  padding:10px 20px;
+  background:#00d1b2;
+  border:none;
+  border-radius:6px;
+  color:white;
+}
+</style>
+</head>
+<body>
+
+<div class="login-box">
+<h2>Login</h2>
+<input type="text" id="email" placeholder="Email"><br>
+<input type="password" id="password" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+</div>
+
+<script>
+async function login(){
+  const email=document.getElementById("email").value;
+  const password=document.getElementById("password").value;
+
+  const res = await fetch("/api/auth/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email,password})
+  });
+
+  const data = await res.json();
+
+  if(data.token){
+    localStorage.setItem("token",data.token);
+    if(data.role==="admin"){
+      window.location.href="admin.html";
+    }else{
+      window.location.href="index.html";
+    }
+  }else{
+    alert("Login failed");
+  }
+}
+</script>
+
+</body>
+</html>
